@@ -16,13 +16,13 @@
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/index.css">
         <link rel="stylesheet" href="/css/message.css">
-        <javascript>
+        <script>
             var poolData = {
                 UserPoolId: window._config.cognito.userPoolId,
                 ClientId: window._config.cognito.userPoolClientId
             };
             var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);            
-        </javascript>
+        </script>
     </head>
     <body>
         <!--[if lt IE 7]>
