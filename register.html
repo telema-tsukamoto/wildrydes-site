@@ -3,64 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <title>WildRydes Registration</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- AWS Amplify CDN -->
-    <script src="https://unpkg.com/@aws-amplify/core"></script>
-    <script src="https://unpkg.com/@aws-amplify/auth"></script>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/index.css">
 
-    <script>
-      // Amplify 設定
-      Amplify.configure({
-        Auth: {
-          region: 'ap-southeast-2',
-          userPoolId: 'ap-southeast-2_OuvpJbU5m',         // 既存のUserPoolId
-          userPoolWebClientId: '4kppa7j77h6pegkf6fvp7d7hua' // 既存のClientId
-        }
-      });
-
-      async function registerUser(event) {
-        event.preventDefault();
-
-        const email = document.getElementById('emailInput').value;
-        const password = document.getElementById('passwordInput').value;
-
-        try {
-          const result = await Amplify.Auth.signUp({
-            username: email,       // ← ここをメールアドレスに固定
-            password: password,
-            attributes: {
-              email: email         // email 属性もメールアドレス
-            },
-            autoSignIn: {           // 確認後に自動サインイン（必要であれば true/false）
-              enabled: false
-            }
-          });
-
-          alert("登録成功！メールを確認して認証コードを入力してください。");
-          console.log(result);
-
-        } catch (err) {
-          alert("登録エラー: " + err.message);
-          console.error(err);
-        }
-      }
-
-      document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('registerForm').addEventListener('submit', registerUser);
-      });
-    </script>
+    <!-- AWS Amplify UMD版 -->
+    <script src="https://cdn.jsdelivr.net/npm/aws-amplify@5.1.6/dist/aws-amplify.min.js"></script>
 </head>
 <body>
-    <h1>WildRydes ユーザー登録</h1>
+    <h1>Register</h1>
     <form id="registerForm">
-        <label>Email</label>
-        <input type="email" id="emailInput" placeholder="メールアドレス" required><br><br>
-
-        <label>Password</label>
-        <input type="password" id="passwordInput" placeholder="パスワード" required><br><br>
-
-        <button type="submit">登録</button>
+        <input type="email" id="emailInput" placeholder="Email" required><br>
+        <input type="password" id="passwordInput" placeholder="Password" required><br>
+        <input type="password" id="passwordConfirmInput" placeholder="Confirm Password" required><br>
+        <input type="submit" value="Register">
     </form>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // UMD版では Amplify が window.Amplify として定義される
+        Amplify.configure({
+            Auth: {
+                region: 'ap-southeast-2',
+                userPoolId: 'ap-southeast-2_OuvpJbU5m',        // CLIで作成したプールID
+                userPoolWebClientId: '4kppa7j77h6pegkf6fvp7d7hua' // CLIで作成したクライアントID
+            }
+        });
+
+        const form = document.getElementById('registerForm');
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('emailInput').value.trim();
+            const password = document.getElementById('passwordInput').value;
+            const passwordConfirm = document.getElementById('passwordConfirmInput').value;
+
+            if (password !== passwordConfirm) {
+                alert("Passwords do not match!");
+                return;
+            }
+
+            try {
+                await Amplify.Auth.signUp({
+                    username: email,      // Email を Username とする
+                    password: password,
+                    attributes: { email: email }
+                });
+                alert("Registration successful! Check your email for verification code.");
+            } catch (err) {
+                console.error(err);
+                alert("Registration error: " + err.message);
+            }
+        });
+    });
+    </script>
 </body>
 </html>
