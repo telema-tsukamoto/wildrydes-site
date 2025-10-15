@@ -1,49 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>WildRydes Verify</title>
-  <script src="https://cdn.jsdelivr.net/npm/amazon-cognito-identity-js@6.2.0/dist/amazon-cognito-identity.min.js"></script>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
 
-  <!-- config.js を読み込む -->
-  <script src="js/config.js"></script>
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-  <script>
-    function verifyUser() {
-      const username = document.getElementById('email').value;
-      const code = document.getElementById('code').value;
+        <link rel="stylesheet" href="css/font.css">
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/index.css">
+        <link rel="stylesheet" href="/css/message.css">
+        <script>
+            var poolData = {
+                UserPoolId: window._config.cognito.userPoolId,
+                ClientId: window._config.cognito.userPoolClientId
+            };
+            var userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);            
+        </script>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
+        <![endif]-->
 
-      // UserPool 設定
-      const poolData = {
-        UserPoolId: window._config.cognito.userPoolId,        // 新しいUserPoolId
-        ClientId: window._config.cognito.userPoolClientId     // 新しいClientId
-      };
-      const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+        <div id="noCognitoMessage" class="configMessage" style="display: none;">
+            <div class="backdrop"></div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">No Cognito User Pool Configured</h3>
+                </div>
+                <div class="panel-body">
+                    <p>There is no user pool configured in <a href="/js/config.js">/js/config.js</a>. You'll configure this in Module 2 of the workshop.</p>
+                </div>
+            </div>
+        </div>
 
-      const userData = {
-        Username: username,
-        Pool: userPool
-      };
-      const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+        <header>
+          <img src="images/logo.png">
+        </header>
 
-      cognitoUser.confirmRegistration(code, true, function(err, result) {
-        if (err) {
-          alert("確認失敗: " + err.message || JSON.stringify(err));
-          return;
-        }
-        alert("ユーザー確認成功: " + result);
-      });
-    }
-  </script>
-</head>
-<body>
-  <h1>Verify Your Account</h1>
-  <label for="email">Email:</label>
-  <input type="email" id="email" required><br><br>
 
-  <label for="code">Verification Code:</label>
-  <input type="text" id="code" required><br><br>
+        <section class="form-wrap">
+            <h1>Verify Email</h1>
+            <form id="verifyForm">
+              <input type="email" id="emailInputVerify" placeholder="Email" required>
+              <input type="text" id="codeInputVerify" placeholder="Verification Code" pattern=".*" required>
 
-  <button onclick="verifyUser()">Verify</button>
-</body>
+              <input type="submit" value="Verify">
+            </form>
+        </section>
+
+        <script src="js/vendor/jquery-3.1.0.js"></script>
+        <script src="js/vendor/bootstrap.min.js"></script>
+        <script src="js/vendor/aws-cognito-sdk.min.js"></script>
+        <script src="js/vendor/amazon-cognito-identity.min.js"></script>
+        <script src="js/config.js"></script>
+        <script src="js/cognito-auth.js"></script>
+    </body>
 </html>
