@@ -16,6 +16,26 @@
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/index.css">
         <link rel="stylesheet" href="/css/message.css">
+        <script>
+// メールアドレスとパスワードの取得
+var email = document.getElementById('email').value;
+var password = document.getElementById('password').value;
+
+// Cognito ユーザープールへの登録
+Auth.signUp({
+    username: email,          // ← ここでメールアドレスを Username に指定
+    password: password,
+    attributes: {
+        email: email          // ← email 属性も同じメールアドレス
+    }
+}).then(function(data) {
+    alert("登録成功！メールを確認してください。");
+    console.log(data);
+}).catch(function(err) {
+    alert("エラー: " + err.message || JSON.stringify(err));
+    console.log(err);
+});
+        </script>
     </head>
     <body>
         <!--[if lt IE 7]>
