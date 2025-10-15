@@ -11,55 +11,53 @@
     <link rel="stylesheet" href="css/index.css">
     <link rel="stylesheet" href="/css/message.css">
 
+    <!-- jQuery & Bootstrap -->
+    <script src="js/vendor/jquery-3.1.0.js"></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
+
     <!-- AWS Amplify -->
-    <script src="https://unpkg.com/@aws-amplify/core"></script>
-    <script src="https://unpkg.com/@aws-amplify/auth"></script>
-
-    <script>
-      // Amplify の設定
-      Amplify.configure({
-        Auth: {
-          region: 'ap-southeast-2',
-          userPoolId: 'ap-southeast-2_OuvpJbU5m',        // register.html と同じ
-          userPoolWebClientId: '4kppa7j77h6pegkf6fvp7d7hua' // register.html と同じ
-        }
-      });
-
-      // フォーム送信時の確認処理
-      async function confirmUser(event) {
-        event.preventDefault();  // ページリロード防止
-        const email = document.getElementById('emailInputVerify').value;
-        const code = document.getElementById('codeInputVerify').value;
-
-        try {
-          await Amplify.Auth.confirmSignUp(email, code);
-          alert("ユーザー確認完了！");
-        } catch (err) {
-          alert("確認エラー: " + err.message);
-          console.error(err);
-        }
-      }
-
-      window.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('verifyForm').addEventListener('submit', confirmUser);
-      });
-    </script>
+    <script src="https://unpkg.com/aws-amplify@4.0.3/dist/aws-amplify.min.js"></script>
 </head>
 <body>
     <header>
-      <img src="images/logo.png" alt="Logo">
+        <img src="images/logo.png" alt="Logo">
     </header>
 
     <section class="form-wrap">
         <h1>Verify Email</h1>
         <form id="verifyForm">
-          <input type="email" id="emailInputVerify" placeholder="Email" required>
-          <input type="text" id="codeInputVerify" placeholder="Verification Code" required>
-          <input type="submit" value="Verify">
+            <input type="email" id="emailInputVerify" placeholder="Email" required>
+            <input type="text" id="codeInputVerify" placeholder="Verification Code" required>
+            <input type="submit" value="Verify">
         </form>
     </section>
 
-    <script src="js/vendor/jquery-3.1.0.js"></script>
-    <script src="js/vendor/bootstrap.min.js"></script>
+    <script>
+        // Amplify 設定
+        aws_amplify.Amplify.configure({
+            Auth: {
+                region: 'ap-southeast-2',
+                userPoolId: 'ap-southeast-2_OuvpJbU5m',        // register.html と同じ
+                userPoolWebClientId: '4kppa7j77h6pegkf6fvp7d7hua' // register.html と同じ
+            }
+        });
+
+        const Auth = aws_amplify.Amplify.Auth;
+
+        // フォーム送信時
+        document.getElementById('verifyForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const email = document.getElementById('emailInputVerify').value;
+            const code = document.getElementById('codeInputVerify').value;
+
+            try {
+                await Auth.confirmSignUp(email, code);
+                alert("ユーザー確認完了！");
+            } catch (err) {
+                alert("確認エラー: " + err.message);
+                console.error(err);
+            }
+        });
+    </script>
 </body>
 </html>
