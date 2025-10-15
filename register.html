@@ -16,26 +16,45 @@
         <link rel="stylesheet" href="css/normalize.css">
         <link rel="stylesheet" href="css/index.css">
         <link rel="stylesheet" href="/css/message.css">
-        <script>
-// メールアドレスとパスワードの取得
-var email = document.getElementById('email').value;
-var password = document.getElementById('password').value;
 
-// Cognito ユーザープールへの登録
-Auth.signUp({
-    username: email,          // ← ここでメールアドレスを Username に指定
-    password: password,
-    attributes: {
-        email: email          // ← email 属性も同じメールアドレス
+
+<script src="https://unpkg.com/@aws-amplify/core"></script>
+<script src="https://unpkg.com/@aws-amplify/auth"></script>
+<script>
+  // Cognito 設定
+  Amplify.configure({
+    Auth: {
+      region: 'ap-southeast-2',
+      userPoolId: 'ap-southeast-2_OuvpJbU5m',        // 既存のUserPoolId
+      userPoolWebClientId: '4kppa7j77h6pegkf6fvp7d7hua' // 既存のClientId
     }
-}).then(function(data) {
-    alert("登録成功！メールを確認してください。");
-    console.log(data);
-}).catch(function(err) {
-    alert("エラー: " + err.message || JSON.stringify(err));
-    console.log(err);
-});
-        </script>
+  });
+
+  async function signUpUser() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    try {
+      const data = await Auth.signUp({
+        username: email,         // ← メールアドレスそのまま
+        password: password,
+        attributes: { email }    // email 属性も同じ
+      });
+      alert("登録成功！メールを確認してください。");
+      console.log(data);
+    } catch (err) {
+      alert("エラー: " + err.message);
+      console.error(err);
+    }
+  }
+
+  document.getElementById('registerButton').addEventListener('click', signUpUser);
+</script>
+
+
+
+
+
     </head>
     <body>
         <!--[if lt IE 7]>
